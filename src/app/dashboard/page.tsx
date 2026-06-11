@@ -1,5 +1,5 @@
 import { Dashboard } from "@/views/dashboard";
 
-export default function Home() {
+export default function DashboardPage() {
   return <Dashboard />;
 }

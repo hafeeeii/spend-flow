@@ -1,0 +1,141 @@
+"use client"
+
+import * as React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import {
+  LayoutDashboard,
+  Inbox,
+  FileText,
+  Wallet,
+  Tag,
+  Sliders,
+  TrendingUp,
+  ClipboardList,
+  Settings,
+} from "lucide-react"
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuBadge,
+  SidebarGroup,
+  SidebarGroupContent,
+} from "@/components/ui/sidebar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
+export function AppSidebar() {
+  const pathname = usePathname()
+
+  const navItems = [
+    {
+      title: "Dashboard",
+      url: "/",
+      icon: LayoutDashboard,
+      badge: null,
+    },
+    {
+      title: "Inbox Queue",
+      url: "#",
+      icon: Inbox,
+      badge: 3,
+    },
+    {
+      title: "Requests",
+      url: "#",
+      icon: FileText,
+      badge: null,
+    },
+    {
+      title: "Budgets",
+      url: "#",
+      icon: Wallet,
+      badge: null,
+    },
+    {
+      title: "Vendors",
+      url: "#",
+      icon: Tag,
+      badge: null,
+    },
+    {
+      title: "Workflows",
+      url: "#",
+      icon: Sliders,
+      badge: null,
+    },
+    {
+      title: "BI Analytics",
+      url: "#",
+      icon: TrendingUp,
+      badge: null,
+    },
+    {
+      title: "Audit Logs",
+      url: "#",
+      icon: ClipboardList,
+      badge: null,
+    },
+    {
+      title: "Settings",
+      url: "#",
+      icon: Settings,
+      badge: null,
+    },
+  ]
+
+  return (
+    <Sidebar className="border-r border-slate-100 ">
+      <SidebarHeader className="p-5">
+        <div className="flex items-center space-x-2.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded bg-slate-900 font-bold text-white text-sm">
+            S
+          </div>
+          <span className="font-bold tracking-tight text-slate-900 text-base">
+            SpendFlow
+          </span>
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent className="px-3">
+        <SidebarGroup className="p-0">
+          <SidebarGroupContent>
+            <SidebarMenu className="gap-1">
+              {navItems.map((item) => {
+                const isActive = pathname === item.url || (item.url === "/" && pathname === "/dashboard")
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      className={`w-full px-3 py-3 rounded-md transition ${
+                        isActive
+                          ? "bg-slate-100 text-slate-900"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      }`}
+                    >
+                      <Link href={item.url}>
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                    {item.badge && (
+                      <SidebarMenuBadge className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+                        {item.badge}
+                      </SidebarMenuBadge>
+                    )}
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  )
+}
