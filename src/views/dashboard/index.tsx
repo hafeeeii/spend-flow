@@ -135,17 +135,17 @@ export function Dashboard() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
-          <p className="text-xs text-slate-500 mt-1">Acme Corp spend and governance health overview.</p>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
+          <p className="text-xs text-muted-foreground mt-1">Acme Corp spend and governance health overview.</p>
         </div>
         <div className="flex items-center space-x-3">
-          <button className="px-4 py-2 bg-slate-950 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs hover:shadow transition-all duration-150 flex items-center space-x-1.5 cursor-pointer">
+          <button className="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg text-xs font-semibold shadow-xs hover:shadow transition-all duration-150 flex items-center space-x-1.5 cursor-pointer">
             <Plus className="h-4 w-4 stroke-[2.5]" />
             <span>New Request</span>
           </button>
           <button 
             onClick={() => setTableFilter("pending")} 
-            className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold shadow-2xs hover:border-slate-300 transition-all duration-150 flex items-center space-x-1.5 cursor-pointer bg-white"
+            className="px-4 py-2 border border-input hover:bg-muted text-foreground rounded-lg text-xs font-semibold shadow-2xs transition-all duration-150 flex items-center space-x-1.5 cursor-pointer bg-background"
           >
             <Inbox className="h-4 w-4" />
             <span>Go to Inbox</span>

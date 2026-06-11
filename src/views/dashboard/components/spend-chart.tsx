@@ -44,19 +44,19 @@ export function SpendChart({ data }: SpendChartProps) {
       : "";
 
   return (
-    <Card className="lg:col-span-2 border-slate-100/80 shadow-2xs bg-white">
+    <Card className="lg:col-span-2 border-border shadow-2xs bg-card text-card-foreground transition-colors duration-200">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <div>
-          <CardTitle className="text-sm font-bold text-slate-800">
+          <CardTitle className="text-sm font-bold text-foreground">
             Monthly Spend Trends
           </CardTitle>
-          <CardDescription className="text-[10px] text-slate-400 mt-0.5">
+          <CardDescription className="text-xs text-muted-foreground mt-0.5">
             Aggregate spend over the last six months.
           </CardDescription>
         </div>
         <Badge
           variant="outline"
-          className="text-xs font-semibold text-slate-500 bg-white border-slate-200"
+          className="text-xs font-semibold text-muted-foreground bg-background border-border"
         >
           H1 2026
         </Badge>
@@ -68,8 +68,8 @@ export function SpendChart({ data }: SpendChartProps) {
         >
           <defs>
             <linearGradient id="spendGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#635bff" stopOpacity="0.25" />
-              <stop offset="100%" stopColor="#635bff" stopOpacity="0" />
+              <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
             </linearGradient>
           </defs>
 
@@ -84,14 +84,14 @@ export function SpendChart({ data }: SpendChartProps) {
                   y1={y}
                   x2={trendSvgWidth - trendPadding}
                   y2={y}
-                  stroke="#f1f5f9"
                   strokeWidth="1"
+                  className="stroke-border/40"
                 />
                 <text
                   x={trendPadding - 8}
                   y={y + 3}
                   textAnchor="end"
-                  className="text-[8px] fill-slate-400 font-semibold"
+                  className="text-[8px] fill-current text-muted-foreground/80 font-semibold"
                 >
                   ${(val / 1000).toFixed(0)}k
                 </text>
@@ -110,7 +110,7 @@ export function SpendChart({ data }: SpendChartProps) {
           <path
             d={trendLinePath}
             fill="none"
-            stroke="#635bff"
+            stroke="var(--primary)"
             strokeWidth="2.5"
             strokeLinecap="round"
             className="transition-all duration-300"
@@ -123,10 +123,11 @@ export function SpendChart({ data }: SpendChartProps) {
                 cx={p.x}
                 cy={p.y}
                 r={hoveredIndex === i ? 6 : 4}
-                fill={hoveredIndex === i ? "#635bff" : "#ffffff"}
-                stroke="#635bff"
+                stroke="var(--primary)"
                 strokeWidth={hoveredIndex === i ? 2 : 1.5}
-                className="transition-all duration-150 cursor-pointer"
+                className={`transition-all duration-150 cursor-pointer ${
+                  hoveredIndex === i ? "fill-primary" : "fill-card"
+                }`}
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
               />
@@ -134,7 +135,7 @@ export function SpendChart({ data }: SpendChartProps) {
                 x={p.x}
                 y={trendSvgHeight - trendPadding + 14}
                 textAnchor="middle"
-                className="text-[9px] fill-slate-500 font-bold"
+                className="text-[9px] fill-current text-muted-foreground font-bold"
               >
                 {p.month}
               </text>
@@ -145,14 +146,14 @@ export function SpendChart({ data }: SpendChartProps) {
         {/* Hover Tooltip display */}
         {hoveredIndex !== null && (
           <div
-            className="absolute z-10 p-2 bg-slate-900 text-white rounded-lg text-[10px] shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-full transition-all duration-150"
+            className="absolute z-10 p-2 bg-popover text-popover-foreground border border-border rounded-lg text-xs shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-full transition-all duration-150"
             style={{
               left: `${(trendPoints[hoveredIndex].x / trendSvgWidth) * 100}%`,
               top: `${(trendPoints[hoveredIndex].y / trendSvgHeight) * 100 - 8}%`,
             }}
           >
             <div className="font-bold">{data[hoveredIndex].month} Spend</div>
-            <div className="text-indigo-300 font-extrabold mt-0.5">
+            <div className="text-primary font-extrabold mt-0.5">
               $
               {data[hoveredIndex].spend.toLocaleString("en-US", {
                 minimumFractionDigits: 2,

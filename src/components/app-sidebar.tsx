@@ -90,13 +90,13 @@ export function AppSidebar() {
   ]
 
   return (
-    <Sidebar className="border-r border-slate-100 ">
+    <Sidebar className="border-r border-sidebar-border transition-colors duration-200">
       <SidebarHeader className="p-5">
         <div className="flex items-center space-x-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded bg-slate-900 font-bold text-white text-sm">
+          <div className="flex h-7 w-7 items-center justify-center rounded bg-sidebar-primary font-bold text-sidebar-primary-foreground text-sm">
             S
           </div>
-          <span className="font-bold tracking-tight text-slate-900 text-base">
+          <span className="font-bold tracking-tight text-sidebar-foreground text-base">
             SpendFlow
           </span>
         </div>
@@ -115,8 +115,8 @@ export function AppSidebar() {
                       isActive={isActive}
                       className={`w-full px-3 py-3 rounded-md transition ${
                         isActive
-                          ? "bg-slate-100 text-slate-900"
-                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                          : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                       }`}
                     >
                       <Link href={item.url}>
@@ -125,7 +125,7 @@ export function AppSidebar() {
                       </Link>
                     </SidebarMenuButton>
                     {item.badge && (
-                      <SidebarMenuBadge className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+                      <SidebarMenuBadge className="mr-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                         {item.badge}
                       </SidebarMenuBadge>
                     )}

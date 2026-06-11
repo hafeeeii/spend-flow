@@ -18,12 +18,12 @@ export function DepartmentChart({ data }: DepartmentChartProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <Card className="border-slate-100/80 shadow-2xs bg-white">
+    <Card className="border-border shadow-2xs bg-card text-card-foreground transition-colors duration-200">
       <CardHeader className="pb-4">
-        <CardTitle className="text-sm font-bold text-slate-800">
+        <CardTitle className="text-sm font-bold text-foreground">
           Spend by Department
         </CardTitle>
-        <CardDescription className="text-[10px] text-slate-400 mt-0.5">
+        <CardDescription className="text-xs text-muted-foreground mt-0.5">
           Current Q2 aggregate spend distribution.
         </CardDescription>
       </CardHeader>
@@ -39,14 +39,14 @@ export function DepartmentChart({ data }: DepartmentChartProps) {
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
-                <div className="flex items-center justify-between text-[10px] font-bold text-slate-600">
+                <div className="flex items-center justify-between text-xs font-bold text-foreground">
                   <span>{dept.department}</span>
-                  <span className="font-semibold text-slate-400">
+                  <span className="font-semibold text-muted-foreground">
                     ${(dept.spent / 1000).toFixed(1)}k / $
                     {(dept.limit / 1000).toFixed(0)}k
                   </span>
                 </div>
-                <div className="relative w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className="relative w-full h-2 rounded-full bg-muted overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{
@@ -59,7 +59,7 @@ export function DepartmentChart({ data }: DepartmentChartProps) {
 
                 {/* Responsive metric details */}
                 {isHovered && (
-                  <div className="flex items-center justify-between text-[9px] text-indigo-600 font-bold bg-indigo-50/50 p-1 rounded animate-fade-in">
+                  <div className="flex items-center justify-between text-xs text-accent-foreground font-bold bg-accent p-1 rounded animate-fade-in">
                     <span>Allocated Ratio:</span>
                     <span>{Math.round(ratio)}%</span>
                   </div>
