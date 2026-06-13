@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Card,
   CardContent,
@@ -8,15 +8,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DepartmentBudget } from "../types"
+import { BarChart, Bar, Cell, YAxis, XAxis, LabelList } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { DepartmentBudget } from "../types";
 
 interface DepartmentChartProps {
   data: DepartmentBudget[];
 }
 
-export function DepartmentChart({ data }: DepartmentChartProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+const chartConfig = {
+  spent: {
+    label: "Total Spent",
+  },
+} satisfies ChartConfig;
 
+export function DepartmentChart({ data }: DepartmentChartProps) {
   return (
     <Card className="border-border shadow-2xs bg-card text-card-foreground transition-colors duration-200">
       <CardHeader className="pb-4">
@@ -28,47 +34,40 @@ export function DepartmentChart({ data }: DepartmentChartProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="h-56 pt-2">
-        <div className="h-full flex flex-col justify-between space-y-3">
-          {data.map((dept, i) => {
-            const ratio = Math.min((dept.spent / dept.limit) * 100, 100);
-            const isHovered = hoveredIndex === i;
-            return (
-              <div
-                key={dept.department}
-                className="space-y-1 cursor-pointer"
-                onMouseEnter={() => setHoveredIndex(i)}
-                onMouseLeave={() => setHoveredIndex(null)}
-              >
-                <div className="flex items-center justify-between text-xs font-bold text-foreground">
-                  <span>{dept.department}</span>
-                  <span className="font-semibold text-muted-foreground">
-                    ${(dept.spent / 1000).toFixed(1)}k / $
-                    {(dept.limit / 1000).toFixed(0)}k
-                  </span>
-                </div>
-                <div className="relative w-full h-2 rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${ratio}%`,
-                      backgroundColor: dept.color,
-                      filter: isHovered ? "brightness(0.9)" : "none",
-                    }}
-                  />
-                </div>
-
-                {/* Responsive metric details */}
-                {isHovered && (
-                  <div className="flex items-center justify-between text-xs text-accent-foreground font-bold bg-accent p-1 rounded animate-fade-in">
-                    <span>Allocated Ratio:</span>
-                    <span>{Math.round(ratio)}%</span>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <ChartContainer config={chartConfig} className="h-full w-full overflow-visible">
+          <BarChart
+            data={data}
+            layout="vertical"
+            margin={{ top: 5, right: 45, left: -10, bottom: 5 }}
+          >
+            <XAxis type="number" hide />
+            <YAxis
+              dataKey="department"
+              type="category"
+              tickLine={false}
+              axisLine={false}
+              className="text-[10px] font-semibold fill-muted-foreground"
+              width={75}
+            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent labelKey="department" />} />
+            <Bar dataKey="spent" radius={4} barSize={12}>
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color || "var(--primary)"} />
+              ))}
+              <LabelList
+                dataKey="spent"
+                position="right"
+                formatter={(value: any) => {
+                  const num = Number(value);
+                  return isNaN(num) ? "" : `$${(num / 1000).toFixed(1)}k`;
+                }}
+                className="text-[9px] font-bold fill-muted-foreground"
+              />
+            </Bar>
+          </BarChart>
+        </ChartContainer>
       </CardContent>
     </Card>
   );
 }
+
