@@ -27,10 +27,13 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useRequests } from "@/hooks/use-requests"
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const { requests, isMounted } = useRequests()
+
+  const pendingCount = requests.filter(r => r.status === "pending").length
 
   const navItems = [
     {
@@ -41,9 +44,9 @@ export function AppSidebar() {
     },
     {
       title: "Inbox Queue",
-      url: "#",
+      url: "/inbox",
       icon: Inbox,
-      badge: 3,
+      badge: isMounted && pendingCount > 0 ? pendingCount : null,
     },
     {
       title: "Requests",
@@ -88,6 +91,7 @@ export function AppSidebar() {
       badge: null,
     },
   ]
+
 
   return (
     <Sidebar className="border-r border-sidebar-border transition-colors duration-200">

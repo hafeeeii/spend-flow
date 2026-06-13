@@ -2,9 +2,11 @@
 
 import React, { useState } from "react"
 import { Plus, Inbox } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-import { INITIAL_REQUESTS, INITIAL_BUDGETS, TREND_DATA } from "./mock-data"
+import { INITIAL_BUDGETS, TREND_DATA } from "./mock-data"
 import { PurchaseRequest } from "./types"
+import { useRequests } from "@/hooks/use-requests"
 
 import { StatCards } from "./components/stat-cards"
 import { SpendChart } from "./components/spend-chart"
@@ -14,9 +16,15 @@ import { Bottlenecks } from "./components/bottlenecks"
 import { RequestDrawer } from "./components/request-drawer"
 
 export function Dashboard() {
-  const [requests, setRequests] = useState<PurchaseRequest[]>(INITIAL_REQUESTS)
-  const [selectedRequest, setSelectedRequest] = useState<PurchaseRequest | null>(null)
+  const router = useRouter()
+  const { requests, approveRequest, rejectRequest } = useRequests()
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null)
   const [tableFilter, setTableFilter] = useState<"all" | "pending" | "approved" | "rejected">("all")
+
+  const selectedRequest = requests.find(r => r.id === selectedRequestId) || null
+  const setSelectedRequest = (req: PurchaseRequest | null) => {
+    setSelectedRequestId(req ? req.id : null)
+  }
 
   // Dynamically calculate dashboard counts
   const pendingRequests = requests.filter(r => r.status === "pending")
@@ -27,100 +35,12 @@ export function Dashboard() {
 
   // Handler to approve a request
   const handleApprove = (id: string) => {
-    setRequests(prev => prev.map(req => {
-      if (req.id !== id) return req
-      
-      const activeIdx = req.timeline.findIndex(t => t.status === "active")
-      const updatedTimeline = [...req.timeline]
-      let nextStage = req.currentStage
-      let nextStatus = req.status
-
-      if (activeIdx !== -1) {
-        updatedTimeline[activeIdx] = {
-          ...updatedTimeline[activeIdx],
-          status: "completed",
-          timestamp: new Date().toISOString()
-        }
-
-        if (activeIdx + 1 < updatedTimeline.length) {
-          updatedTimeline[activeIdx + 1] = {
-            ...updatedTimeline[activeIdx + 1],
-            status: "active"
-          }
-          nextStage = updatedTimeline[activeIdx + 1].stage
-        } else {
-          nextStage = "Approved"
-          nextStatus = "approved"
-        }
-      }
-
-      const updatedReq = {
-        ...req,
-        status: nextStatus as "approved" | "pending" | "rejected",
-        currentStage: nextStage,
-        timeline: updatedTimeline,
-        comments: [
-          ...req.comments,
-          {
-            author: "Alex Rivera",
-            role: "Design Manager",
-            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-            text: `Approved request step. Stage updated to: ${nextStage}`,
-            timestamp: new Date().toISOString()
-          }
-        ]
-      }
-
-      // Sync selection drawer
-      if (selectedRequest?.id === id) {
-        setSelectedRequest(updatedReq)
-      }
-
-      return updatedReq
-    }))
+    approveRequest(id)
   }
 
   // Handler to reject a request
   const handleReject = (id: string, reason: string) => {
-    if (!reason.trim()) return
-    setRequests(prev => prev.map(req => {
-      if (req.id !== id) return req
-
-      const activeIdx = req.timeline.findIndex(t => t.status === "active")
-      const updatedTimeline = [...req.timeline]
-
-      if (activeIdx !== -1) {
-        updatedTimeline[activeIdx] = {
-          ...updatedTimeline[activeIdx],
-          status: "rejected",
-          timestamp: new Date().toISOString()
-        }
-      }
-
-      const updatedReq = {
-        ...req,
-        status: "rejected" as const,
-        currentStage: "Rejected",
-        timeline: updatedTimeline,
-        comments: [
-          ...req.comments,
-          {
-            author: "Alex Rivera",
-            role: "Design Manager",
-            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-            text: `Rejected request. Reason: ${reason}`,
-            timestamp: new Date().toISOString()
-          }
-        ]
-      }
-
-      // Sync selection drawer
-      if (selectedRequest?.id === id) {
-        setSelectedRequest(updatedReq)
-      }
-
-      return updatedReq
-    }))
+    rejectRequest(id, reason)
   }
 
   // Filter list
@@ -144,7 +64,7 @@ export function Dashboard() {
             <span>New Request</span>
           </button>
           <button 
-            onClick={() => setTableFilter("pending")} 
+            onClick={() => router.push("/inbox")} 
             className="px-4 py-2 border border-input hover:bg-muted text-foreground rounded-lg text-xs font-semibold shadow-2xs transition-all duration-150 flex items-center space-x-1.5 cursor-pointer bg-background"
           >
             <Inbox className="h-4 w-4" />
