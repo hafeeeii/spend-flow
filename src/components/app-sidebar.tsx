@@ -74,7 +74,7 @@ export function AppSidebar() {
     },
     {
       title: "BI Analytics",
-      url: "#",
+      url: "/analytics",
       icon: TrendingUp,
       badge: null,
     },
