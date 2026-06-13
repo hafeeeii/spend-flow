@@ -80,7 +80,7 @@ export function AppSidebar() {
     },
     {
       title: "Audit Logs",
-      url: "#",
+      url: "/audit",
       icon: ClipboardList,
       badge: null,
     },
