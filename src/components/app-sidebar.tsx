@@ -62,7 +62,7 @@ export function AppSidebar() {
     },
     {
       title: "Vendors",
-      url: "#",
+      url: "/vendors",
       icon: Tag,
       badge: null,
     },

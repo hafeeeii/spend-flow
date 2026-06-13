@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useRequests } from "@/hooks/use-requests"
+import { useVendors } from "@/hooks/use-vendors"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -36,11 +37,19 @@ const BUDGET_LIMITS: Record<string, { spent: number; limit: number }> = {
 
 export function CreateRequestDrawer({ open, onOpenChange, onSuccess }: CreateRequestDrawerProps) {
   const { addRequest } = useRequests()
+  const { vendors, isMounted: isVendorsMounted } = useVendors()
   
   // Form State
   const [newTitle, setNewTitle] = useState("")
   const [newDescription, setNewDescription] = useState("")
   const [newVendor, setNewVendor] = useState("")
+
+  // Set default selected vendor when drawer opens and vendors load
+  useEffect(() => {
+    if (open && isVendorsMounted && vendors.length > 0 && !newVendor) {
+      setNewVendor(vendors[0].name)
+    }
+  }, [open, isVendorsMounted, vendors, newVendor])
   const [newCategory, setNewCategory] = useState("Software")
   const [newAmount, setNewAmount] = useState("")
   const [newCurrency, setNewCurrency] = useState("USD")
@@ -137,15 +146,30 @@ export function CreateRequestDrawer({ open, onOpenChange, onSuccess }: CreateReq
                 <label htmlFor="req-vendor" className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                   Vendor
                 </label>
-                <Input
-                  id="req-vendor"
-                  type="text"
-                  required
-                  placeholder="e.g. Figma, Apple, AWS"
-                  value={newVendor}
-                  onChange={(e) => setNewVendor(e.target.value)}
-                  className="w-full text-xs font-semibold p-2.5"
-                />
+                {isVendorsMounted && vendors.length > 0 ? (
+                  <Select value={newVendor} onValueChange={setNewVendor}>
+                    <SelectTrigger id="req-vendor" className="w-full h-9 border-input rounded-md bg-background text-foreground text-xs font-semibold justify-between px-3">
+                      <SelectValue placeholder="Select Vendor" />
+                    </SelectTrigger>
+                    <SelectContent position="popper" align="start">
+                      {vendors.map(v => (
+                        <SelectItem key={v.id} value={v.name}>
+                          {v.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    id="req-vendor"
+                    type="text"
+                    required
+                    placeholder="e.g. Figma, Apple, AWS"
+                    value={newVendor}
+                    onChange={(e) => setNewVendor(e.target.value)}
+                    className="w-full text-xs font-semibold p-2.5"
+                  />
+                )}
               </div>
               <div className="space-y-1.5">
                 <label htmlFor="req-category" className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
