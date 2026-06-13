@@ -55,6 +55,7 @@ export function useRequests() {
   }, [])
 
   const approveRequest = (id: string) => {
+    let approvedRequestObject: PurchaseRequest | null = null
     const updated = requests.map(req => {
       if (req.id !== id) return req
       
@@ -82,7 +83,7 @@ export function useRequests() {
         }
       }
 
-      return {
+      const updatedReq = {
         ...req,
         status: nextStatus as "approved" | "pending" | "rejected",
         currentStage: nextStage,
@@ -98,8 +99,35 @@ export function useRequests() {
           }
         ]
       }
+
+      if (nextStatus === "approved" && req.status !== "approved") {
+        approvedRequestObject = updatedReq
+      }
+
+      return updatedReq
     })
     updateRequestsState(updated)
+
+    // Increment budget spent dynamically when request is approved
+    if (approvedRequestObject) {
+      const targetReq = approvedRequestObject as PurchaseRequest
+      const stored = localStorage.getItem("spendflow_budgets")
+      if (stored) {
+        try {
+          const budgets = JSON.parse(stored)
+          const updatedBudgets = budgets.map((b: any) => {
+            if (b.category === targetReq.budgetCategory) {
+              return { ...b, spent: b.spent + targetReq.amount }
+            }
+            return b
+          })
+          localStorage.setItem("spendflow_budgets", JSON.stringify(updatedBudgets))
+          window.dispatchEvent(new Event("storage_budgets_updated"))
+        } catch (e) {
+          console.error("Failed to update budgets on request approval", e)
+        }
+      }
+    }
   }
 
   const rejectRequest = (id: string, reason: string) => {

@@ -56,7 +56,7 @@ export function AppSidebar() {
     },
     {
       title: "Budgets",
-      url: "#",
+      url: "/budgets",
       icon: Wallet,
       badge: null,
     },
