@@ -50,7 +50,7 @@ export function AppSidebar() {
     },
     {
       title: "Requests",
-      url: "#",
+      url: "/requests",
       icon: FileText,
       badge: null,
     },

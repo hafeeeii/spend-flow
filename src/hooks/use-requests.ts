@@ -138,6 +138,49 @@ export function useRequests() {
     updateRequestsState(updated)
   }
 
+  const addRequest = (newRequest: {
+    title: string
+    description: string
+    vendor: string
+    category: string
+    amount: number
+    currency: string
+    budgetCategory: string
+  }) => {
+    const ids = requests.map(r => parseInt(r.id.replace("SF-", ""), 10)).filter(id => !isNaN(id))
+    const nextIdVal = ids.length > 0 ? Math.max(...ids) + 1 : 1083
+    const nextId = `SF-${nextIdVal}`
+
+    const request: PurchaseRequest = {
+      id: nextId,
+      title: newRequest.title,
+      description: newRequest.description,
+      requester: {
+        name: "Alex Rivera",
+        email: "alex.rivera@acme.co",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+        role: "Design Manager",
+        department: "Design"
+      },
+      vendor: newRequest.vendor,
+      category: newRequest.category,
+      amount: Number(newRequest.amount),
+      currency: newRequest.currency || "USD",
+      budgetCategory: newRequest.budgetCategory,
+      status: "pending",
+      currentStage: "Manager Approval",
+      createdAt: new Date().toISOString(),
+      attachments: [],
+      comments: [],
+      timeline: [
+        { stage: "Created", actor: "Alex Rivera", timestamp: new Date().toISOString(), status: "completed" },
+        { stage: "Manager Approval", actor: "Alex Rivera", timestamp: null, status: "active" },
+        { stage: "Finance Approval", actor: "Finance Team", timestamp: null, status: "upcoming" }
+      ]
+    }
+    updateRequestsState([request, ...requests])
+  }
+
   const resetRequests = () => {
     updateRequestsState(INITIAL_REQUESTS)
   }
@@ -146,6 +189,7 @@ export function useRequests() {
     requests,
     approveRequest,
     rejectRequest,
+    addRequest,
     resetRequests,
     isMounted
   }
