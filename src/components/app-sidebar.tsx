@@ -68,7 +68,7 @@ export function AppSidebar() {
     },
     {
       title: "Workflows",
-      url: "#",
+      url: "/workflows",
       icon: Sliders,
       badge: null,
     },
