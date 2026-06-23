@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Figtree } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AppSidebar } from "@/components/app-sidebar";
-import { AppHeader } from "@/components/app-header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/hooks/use-auth";
+import { AuthGuard } from "@/components/auth-guard";
 
 const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -52,15 +51,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset className="flex flex-col min-h-screen">
-                <AppHeader />
-                <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-background">
-                  {children}
-                </main>
-              </SidebarInset>
-            </SidebarProvider>
+            <AuthProvider>
+              <AuthGuard>{children}</AuthGuard>
+            </AuthProvider>
           </TooltipProvider>
         </ThemeProvider>
       </body>

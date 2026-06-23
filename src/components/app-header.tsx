@@ -5,8 +5,18 @@ import { Bell, Search } from "lucide-react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/hooks/use-auth"
 
 export function AppHeader() {
+  const { currentUser } = useAuth()
+
+  const name = currentUser?.name || "Alex Rivera"
+  const description = currentUser 
+    ? `${currentUser.role} (${currentUser.department})` 
+    : "Finance Board"
+  const avatarUrl = currentUser?.avatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+  const initials = name.split(" ").map(w => w.charAt(0)).join("").toUpperCase().slice(0, 2)
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background px-4 md:px-8 transition-colors duration-200">
       {/* Left side: Sidebar Trigger (mobile/desktop toggle) and search bar */}
@@ -49,15 +59,15 @@ export function AppHeader() {
         {/* Profile Info */}
         <div className="flex items-center space-x-3 cursor-pointer">
           <div className="text-right hidden md:block">
-            <p className="text-xs font-bold text-foreground">Alex Rivera</p>
-            <p className="text-xs font-medium text-muted-foreground">Finance Board</p>
+            <p className="text-xs font-bold text-foreground">{name}</p>
+            <p className="text-xs font-medium text-muted-foreground">{description}</p>
           </div>
           <Avatar className="h-7 w-7">
             <AvatarImage
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt="Alex Rivera"
+              src={avatarUrl}
+              alt={name}
             />
-            <AvatarFallback className="text-xs font-bold">AR</AvatarFallback>
+            <AvatarFallback className="text-xs font-bold">{initials}</AvatarFallback>
           </Avatar>
         </div>
       </div>
